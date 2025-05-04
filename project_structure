@@ -1,0 +1,22 @@
+hospital_management/
+├── app/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── user.py
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   └── auth.py
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   └── js/
+│   │       └── main.js
+│   └── templates/
+│       ├── base.html
+│       ├── auth/
+│       │   └── login.html
+│       └── dashboard.html
+├── requirements.txt
+└── run.py 

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h2 class="mb-4">
+        <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard
+    </h2>
+    
+    <div class="row g-4">
+        <!-- Total Patients Card -->
+        <div class="col-12 col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-primary bg-opacity-10 me-3">
+                            <i class="fas fa-procedures text-primary"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Total Patients</h5>
+                    </div>
+                    <p class="card-text display-4 mb-0">{{ total_patients }}</p>
+                    <small class="text-muted">Registered patients</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Doctors Card -->
+        <div class="col-12 col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-success bg-opacity-10 me-3">
+                            <i class="fas fa-user-md text-success"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Active Doctors</h5>
+                    </div>
+                    <p class="card-text display-4 mb-0">{{ total_doctors }}</p>
+                    <small class="text-muted">Currently active doctors</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Today Card -->
+        <div class="col-12 col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-warning bg-opacity-10 me-3">
+                            <i class="fas fa-calendar-check text-warning"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Today's Appointments</h5>
+                    </div>
+                    <p class="card-text display-4 mb-0">{{ appointments_today }}</p>
+                    <small class="text-muted">Scheduled for today</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Upcoming Appointments Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar me-2 text-primary"></i>
+                            Upcoming Appointments
+                        </h5>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>New Appointment
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if upcoming_appointments %}
+                                    {% for appointment in upcoming_appointments %}
+                                    <tr>
+                                        <td>{{ appointment.patient_name }}</td>
+                                        <td>{{ appointment.doctor_name }}</td>
+                                        <td>{{ appointment.date }}</td>
+                                        <td>{{ appointment.time }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ appointment.status_color }}">
+                                                {{ appointment.status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            <i class="fas fa-calendar-times mb-3 display-4"></i>
+                                            <p class="mb-0">No upcoming appointments</p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .icon-circle i {
+        font-size: 24px;
+    }
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    @media (max-width: 768px) {
+        .display-4 {
+            font-size: 2.5rem;
+        }
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+        }
+        .icon-circle i {
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %} 

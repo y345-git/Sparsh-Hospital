@@ -1,0 +1,805 @@
+{% extends "base.html" %}
+
+{% block title %}Add Patient - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="card-title">
+                    <i class="fas fa-user-plus me-2 text-primary"></i>Add New Patient
+                </h2>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="progress mb-4" style="height: 3px;">
+                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+
+            <!-- Step indicators -->
+            <div class="d-flex justify-content-between mb-4">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-text">General Info</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-text">Medical Info</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-text">Medical History</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-text">Symptoms & Complaints</div>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-circle">5</div>
+                    <div class="step-text">Examination & Surgery</div>
+                </div>
+            </div>
+
+            <form id="patientForm" method="POST" class="needs-validation" enctype="multipart/form-data" novalidate>
+                <!-- Step 1: General Information -->
+                <div class="form-step" data-step="1">
+                    <h4 class="mb-4">General Information</h4>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">OPD/UID Number</label>
+                            <input type="text" class="form-control" name="opd_uid" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" name="age" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Doctor Referred</label>
+                            <select class="form-select" name="doctor_referred">
+                                <option value="">Select Doctor</option>
+                                {% for doctor in doctors %}
+                                    <option value="{{ doctor.name }}">{{ doctor.name }} - {{ doctor.specialization }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" name="address" rows="2" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Husband's Occupation</label>
+                            <input type="text" class="form-control" name="occupation_husband">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Wife's Occupation</label>
+                            <input type="text" class="form-control" name="occupation_wife">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Education</label>
+                            <input type="text" class="form-control" name="education">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number 1</label>
+                            <input type="tel" class="form-control" name="phone1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number 2</label>
+                            <input type="tel" class="form-control" name="phone2">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Health Insurance</label>
+                            <select class="form-select" name="has_insurance">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Registration Date</label>
+                            <input type="date" class="form-control" name="registration_date" 
+                                   value="{{ today_date }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Family & Menstrual Information -->
+                <div class="form-step d-none" data-step="2">
+                    <!-- Family Information Section -->
+                    <div class="mb-5">
+                        <h4 class="mb-4">Family Information</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Years Since Marriage</label>
+                                <input type="number" class="form-control" name="years_of_marriage" min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Number of Boys</label>
+                                <input type="number" class="form-control" name="boys_count" min="0" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Number of Girls</label>
+                                <input type="number" class="form-control" name="girls_count" min="0" value="0">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Previous Abortion</label>
+                                <select class="form-select" name="had_abortion" id="hadAbortion">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Number of Abortions</label>
+                                <input type="number" class="form-control" name="abortion_count" min="0" value="0" 
+                                       id="abortionCount" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Delivery Type</label>
+                                <select class="form-select" name="delivery_type">
+                                    <option value="none">None</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="cesarean">Cesarean</option>
+                                    <option value="both">Both</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menstrual Information Section -->
+                    <div>
+                        <h4 class="mb-4">Menstrual Cycle Information</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Last Menstruation Date (LMP)</label>
+                                <input type="date" class="form-control" name="last_menstruation_date">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Days of Bleeding</label>
+                                <input type="number" class="form-control" name="menstruation_days" 
+                                       min="1" max="15" placeholder="e.g., 5">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Cycle Length (days)</label>
+                                <input type="number" class="form-control" name="menstruation_cycle_length" 
+                                       min="21" max="35" placeholder="e.g., 28">
+                                <div class="form-text">After how many days menstruation occurs</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Age When Menstruation Started</label>
+                                <input type="number" class="form-control" name="menstruation_start_age" 
+                                       min="8" max="18" placeholder="e.g., 13">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Medical History -->
+                <div class="form-step d-none" data-step="3">
+                    <h4 class="mb-4">Medical History</h4>
+                    
+                    <!-- Previous Surgeries -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label">Previous Surgeries (if any)</label>
+                            <textarea class="form-control" name="previous_surgeries" rows="2" 
+                                      placeholder="List any previous surgeries"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Existing Conditions -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label">Existing Medical Conditions</label>
+                            <div class="border rounded p-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="has_thyroid" id="hasThyroid"
+                                                   value="1">
+                                            <label class="form-check-label" for="hasThyroid">Thyroid</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="has_diabetes" id="hasDiabetes"
+                                                   value="1">
+                                            <label class="form-check-label" for="hasDiabetes">Diabetes Mellitus</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="has_asthma" id="hasAsthma"
+                                                   value="1">
+                                            <label class="form-check-label" for="hasAsthma">Asthma</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="has_bp" id="hasBP"
+                                                   value="1">
+                                            <label class="form-check-label" for="hasBP">High Blood Pressure</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="has_epilepsy" id="hasEpilepsy"
+                                                   value="1">
+                                            <label class="form-check-label" for="hasEpilepsy">Epilepsy</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Medication -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Currently on Medication</label>
+                            <select class="form-select" name="on_medication" id="onMedication">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Medicine Names</label>
+                            <input type="text" class="form-control" name="medication_names" id="medicationNames" 
+                                   placeholder="List current medications" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Pap Smear History -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Previous Pap Smear</label>
+                            <select class="form-select" name="had_pap_smear" id="hadPapSmear">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Days since last Pap Smear</label>
+                            <input type="number" class="form-control" name="pap_smear_days" id="papSmearDays" 
+                                   min="0" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Allergies -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label">Medicine Allergies</label>
+                            <textarea class="form-control" name="medicine_allergies" rows="2" 
+                                      placeholder="List any known allergies to medicines"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Cancer History -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Family History of Cancer</label>
+                            <select class="form-select" name="has_cancer_history">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                            <div class="form-text">Breast, ovarian, or other organ cancer</div>
+                        </div>
+                    </div>
+
+                    <!-- Previous Reports -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label">Previous Reports (USG/CT/MRI)</label>
+                            <textarea class="form-control" name="previous_reports" rows="2" 
+                                      placeholder="List previous reports with dates"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Report Files Upload -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label">Upload Report Files</label>
+                            <input type="file" class="form-control" name="report_files" multiple 
+                                   accept=".pdf,.jpg,.jpeg,.png">
+                            <div class="form-text">You can select multiple files</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Symptoms & Complaints -->
+                <div class="form-step d-none" data-step="4">
+                    <h4 class="mb-4">Symptoms & Complaints</h4>
+                    
+                    <!-- Blood Clots -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Blood Clots During Periods</label>
+                            <select class="form-select toggle-days" name="has_blood_clots" data-target="blood_clots_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="blood_clots_days" 
+                                   id="blood_clots_days" value="{{ patient.blood_clots_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- White Discharge -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">White Discharge</label>
+                            <select class="form-select toggle-days" name="has_white_discharge" data-target="white_discharge_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="white_discharge_days" 
+                                   id="white_discharge_days" value="{{ patient.white_discharge_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Red Discharge -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Red Discharge</label>
+                            <select class="form-select toggle-days" name="has_red_discharge" data-target="red_discharge_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="red_discharge_days" 
+                                   id="red_discharge_days" value="{{ patient.red_discharge_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Abdominal Pain -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Abdominal Pain</label>
+                            <select class="form-select toggle-days" name="has_abdominal_pain" data-target="abdominal_pain_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="abdominal_pain_days" 
+                                   id="abdominal_pain_days" value="{{ patient.abdominal_pain_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Vaginal Discharge -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Vaginal Discharge</label>
+                            <select class="form-select toggle-days" name="has_vaginal_discharge" data-target="vaginal_discharge_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="vaginal_discharge_days" 
+                                   id="vaginal_discharge_days" value="{{ patient.vaginal_discharge_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Bleeding After Intercourse -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Bleeding After Intercourse</label>
+                            <select class="form-select toggle-days" name="has_bleeding_intercourse" data-target="bleeding_intercourse_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="bleeding_intercourse_days" 
+                                   id="bleeding_intercourse_days" value="{{ patient.bleeding_intercourse_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Urine Leakage -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Urine Leakage</label>
+                            <select class="form-select toggle-days" name="has_urine_leakage" data-target="urine_leakage_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="urine_leakage_days" 
+                                   id="urine_leakage_days" value="{{ patient.urine_leakage_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Post Menopausal Bleeding -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Post Menopausal Bleeding</label>
+                            <select class="form-select toggle-days" name="has_postmenopausal_bleeding" data-target="postmenopausal_bleeding_days">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="postmenopausal_bleeding_days" 
+                                   id="postmenopausal_bleeding_days" value="{{ patient.postmenopausal_bleeding_days or '' }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Other Troubles -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Other Troubles</label>
+                            <textarea class="form-control" name="other_troubles" rows="2" 
+                                      placeholder="Describe any other troubles"></textarea>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Since (days)</label>
+                            <input type="number" class="form-control" name="other_troubles_days" 
+                                   value="{{ patient.other_troubles_days or '' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: General Examination & Surgery -->
+                <div class="form-step d-none" data-step="5">
+                    <!-- General Examination Section -->
+                    <div class="mb-5">
+                        <h4 class="mb-4">General Examination</h4>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Height (cm)</label>
+                                <input type="number" class="form-control" name="height" 
+                                       step="0.01" min="0" max="300">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Weight (kg)</label>
+                                <input type="number" class="form-control" name="weight" 
+                                       step="0.01" min="0" max="500">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Pulse Rate</label>
+                                <input type="number" class="form-control" name="pulse_rate" 
+                                       min="0" max="300">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Blood Pressure</label>
+                                <input type="text" class="form-control" name="blood_pressure" 
+                                       placeholder="e.g., 120/80">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pallar</label>
+                                <textarea class="form-control" name="pallar" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Edema</label>
+                                <textarea class="form-control" name="edema" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Thyroid</label>
+                                <textarea class="form-control" name="thyroid_exam" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Lymph Nodes</label>
+                                <textarea class="form-control" name="lymph_nodes" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Breast</label>
+                                <textarea class="form-control" name="breast_exam" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">RS</label>
+                                <textarea class="form-control" name="rs_exam" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">CVS</label>
+                                <textarea class="form-control" name="cvs_exam" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">P/A</label>
+                                <textarea class="form-control" name="pa_exam" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">P/S/V</label>
+                                <textarea class="form-control" name="psv_exam" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">P/R</label>
+                                <textarea class="form-control" name="pr_exam" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Surgery Details Section -->
+                    <div>
+                        <h4 class="mb-4">Surgery Details</h4>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Name of Surgery</label>
+                                <input type="text" class="form-control" name="surgery_name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Surgery Date</label>
+                                <input type="date" class="form-control" name="surgery_date">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Hospital</label>
+                                <input type="text" class="form-control" name="surgery_hospital">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pre-op Investigation</label>
+                                <textarea class="form-control" name="preop_investigation" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Pre-op Fitness</label>
+                                <textarea class="form-control" name="preop_fitness" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary prev-step" style="display: none;">
+                        <i class="fas fa-arrow-left me-2"></i>Previous
+                    </button>
+                    <button type="button" class="btn btn-primary next-step">
+                        Next<i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success submit-form" style="display: none;">
+                        <i class="fas fa-save me-2"></i>Save Patient
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 0.6rem 1rem;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .step {
+        text-align: center;
+        position: relative;
+        width: 120px;
+    }
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        font-weight: bold;
+    }
+    .step.active .step-circle {
+        background-color: #007bff;
+        color: white;
+    }
+    .step-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+    .step.active .step-text {
+        color: #007bff;
+        font-weight: 500;
+    }
+    .progress {
+        background-color: #e9ecef;
+    }
+    .progress-bar {
+        background-color: #007bff;
+        transition: width 0.3s ease;
+    }
+</style>
+
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+function updateProgress() {
+    const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    document.querySelector('.progress-bar').style.width = `${progress}%`;
+}
+
+function showStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.form-step').forEach(el => {
+        el.classList.add('d-none');
+    });
+    
+    // Show current step
+    document.querySelector(`.form-step[data-step="${step}"]`).classList.remove('d-none');
+    
+    // Update step indicators
+    document.querySelectorAll('.step').forEach(el => {
+        el.classList.remove('active');
+        if (parseInt(el.dataset.step) <= step) {
+            el.classList.add('active');
+        }
+    });
+    
+    // Update buttons
+    const prevBtn = document.querySelector('.prev-step');
+    const nextBtn = document.querySelector('.next-step');
+    const submitBtn = document.querySelector('.submit-form');
+    
+    prevBtn.style.display = step > 1 ? 'block' : 'none';
+    nextBtn.style.display = step < totalSteps ? 'block' : 'none';
+    submitBtn.style.display = step === totalSteps ? 'block' : 'none';
+    
+    updateProgress();
+}
+
+document.querySelector('.next-step').addEventListener('click', () => {
+    // Validate current step before proceeding
+    const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    const requiredFields = currentStepElement.querySelectorAll('[required]');
+    let isValid = true;
+    let errorMessage = 'Please fill in the following required fields:\n';
+    
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            isValid = false;
+            const label = field.closest('.col-md-6, .col-md-4, .col-md-3, .col-12')
+                              .querySelector('.form-label')
+                              ?.textContent || field.name;
+            errorMessage += `\n- ${label.trim()}`;
+        }
+    });
+    
+    if (!isValid) {
+        alert(errorMessage);
+        return;
+    }
+    
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+    }
+});
+
+document.querySelector('.prev-step').addEventListener('click', () => {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+});
+
+// Initialize first step
+showStep(1);
+
+// Add event listeners for conditional fields
+document.getElementById('hadAbortion').addEventListener('change', function() {
+    const abortionCount = document.getElementById('abortionCount');
+    abortionCount.disabled = this.value === '0';
+    if (this.value === '0') {
+        abortionCount.value = '0';
+    }
+});
+
+document.getElementById('onMedication').addEventListener('change', function() {
+    const medicationNames = document.getElementById('medicationNames');
+    medicationNames.disabled = this.value === '0';
+    if (this.value === '0') {
+        medicationNames.value = '';
+    }
+});
+
+document.getElementById('hadPapSmear').addEventListener('change', function() {
+    const papSmearDays = document.getElementById('papSmearDays');
+    papSmearDays.disabled = this.value === '0';
+    if (this.value === '0') {
+        papSmearDays.value = '';
+    }
+});
+
+// Handle all toggle-days selects
+document.querySelectorAll('.toggle-days').forEach(select => {
+    select.addEventListener('change', function() {
+        const daysInput = document.getElementById(this.dataset.target);
+        daysInput.disabled = this.value === '0';
+        if (this.value === '0') {
+            daysInput.value = '';
+        }
+    });
+});
+</script>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %} 

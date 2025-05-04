@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Doctor - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid container-lg py-4">
+    <div class="card shadow">
+        <div class="card-body p-4">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
+                <h2 class="card-title h3 mb-3 mb-sm-0">
+                    <i class="fas fa-user-md me-2 text-primary"></i>Edit Doctor
+                </h2>
+            </div>
+
+            <form method="POST" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{{ doctor.name }}" required>
+                        <div class="invalid-feedback">
+                            Please enter the doctor's name.
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="{{ doctor.email }}" required>
+                        <div class="invalid-feedback">
+                            Please enter a valid email address.
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" 
+                               value="{{ doctor.phone }}" required>
+                        <div class="invalid-feedback">
+                            Please enter a phone number.
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="specialization" class="form-label">Specialization</label>
+                        <input type="text" class="form-control" id="specialization" name="specialization" 
+                               value="{{ doctor.specialization }}" required>
+                        <div class="invalid-feedback">
+                            Please enter the specialization.
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" 
+                                  rows="3" required>{{ doctor.address }}</textarea>
+                        <div class="invalid-feedback">
+                            Please enter the address.
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="active" {{ 'selected' if doctor.status == 'active' }}>Active</option>
+                            <option value="inactive" {{ 'selected' if doctor.status == 'inactive' }}>Inactive</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a status.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between mt-4">
+                    <a href="{{ url_for('doctors.doctor_list') }}" class="btn btn-outline-secondary mb-3 mb-sm-0">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 0.6rem 1rem;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .btn {
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    .text-primary {
+        color: #007bff !important;
+    }
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+{% endblock %} 
